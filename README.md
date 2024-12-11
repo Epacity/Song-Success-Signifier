@@ -39,17 +39,23 @@ Finally, change the placeholder account credentials to those of your Spotify acc
 
 ---
 ## Running the Scraper
-Make sure your Mongo server is running locally on port `27017`. Then, run this command:
-```
-python3 scraper/main.py
-```
+Make sure your Mongo server is running locally on port `27017`. Then, run the `main.py` file in the `scraper` directory.
+
 This will take ~30 minutes to run until completion. You can toggle the variable `CLEAR_DATABASE_ON_RESTART` in `scraper/config.py` to reset the MongoDB database on each run of the scraper.
 
 ## Running the Model
-Find song lyrics that you want to analyze and put them into `lyrics.txt`. Then, run this command:
+Find song lyrics that you want to analyze and put them into `lyrics.txt`. Then, run the `main.py` file in the `model` directory, but make sure you are using an environment/IDE that treats the `scraper` directory as a library. This is because the model uses `generate_topic` from the scraper to generate a topic for the song input. As an alternative, you can comment out the `from scraper.topic_classifier import generate_topic` line in `model/main.py` and replace this block of code:
 ```
-python3 model/main.py
+topic, err = generate_topic(lyrics_text)
+if err:
+    print(f"Could not generate song lyrics: {err}")
+    sys.exit()
 ```
+With a hardcoded topic like this:
+```
+topic = "Love"
+```
+
 The output should look something like this:
 ```
 Getting songs DataFrame from MongoDB...
